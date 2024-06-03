@@ -1,0 +1,30 @@
+.cardItem {
+  margin: 2%;
+  border: 1px solid black;
+}
+
+.cardContainer {
+  background-color: #f9fafa;
+}
+
+.cardTitle {
+  font-size: 16px;
+  margin-left: 5px;
+  font-weight: 500;
+}
+
+.cardImage {
+  width: 120px;
+  height: 90px;
+}
+
+.cardDescription {
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+.cardRow {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 5px;
+}

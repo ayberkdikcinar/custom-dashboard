@@ -1,0 +1,10 @@
+.topbar {
+  background-color: aliceblue;
+  justify-content: end;
+  display: flex;
+  align-items: center;
+}
+.rightAligned {
+  gap: 10px;
+  margin-left: 10px;
+}
