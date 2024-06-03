@@ -1,0 +1,51 @@
+export const items = [
+  {
+    title: 'Line',
+    description: 'Compare metrics over time',
+    image: 'https://www.svgrepo.com/show/324249/line-chart-dots-business-analytics-statistics.svg',
+    itemId: 'line-chart',
+    key: '0',
+  },
+  {
+    title: 'Stacked Area',
+    description: 'Compare the total over time',
+    image: 'https://www.svgrepo.com/show/324237/area-chart-business-analytics-statistics.svg',
+    itemId: 'stacked-area-chart',
+    key: '1',
+  },
+  {
+    title: 'Bar',
+    description: 'Compare categories of data',
+    image: 'https://www.svgrepo.com/show/401170/bar-chart.svg',
+    itemId: 'bar-chart',
+    key: '2',
+  },
+  {
+    title: 'Pie',
+    description: 'Show percentage of total data',
+    image: 'https://www.svgrepo.com/show/489940/pie-chart.svg',
+    itemId: 'pie-chart',
+    key: '3',
+  },
+  {
+    title: 'Gauge',
+    description: 'Show percentage of total data',
+    image: 'https://www.svgrepo.com/show/247566/gauge-indicator.svg',
+    itemId: 'gauge-chart',
+    key: '4',
+  },
+  {
+    title: 'Waterfall',
+    description: 'To visualize realized savings from various cost optimization initiatives',
+    image: 'https://www.svgrepo.com/show/458436/waterfall.svg',
+    itemId: 'waterfall-chart',
+    key: '5',
+  },
+  {
+    title: 'Column',
+    description: 'To analyze the cost per unit of output, helping to understand the efficiency and profitability',
+    image: 'https://www.svgrepo.com/show/410302/stacked-bar-chart.svg',
+    itemId: 'column-chart',
+    key: '6',
+  },
+];

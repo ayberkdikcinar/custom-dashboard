@@ -1,5 +1,5 @@
 'use client';
-
+import styles from './page.module.css';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -13,7 +13,7 @@ import { config } from './charts.config';
 import ChartSelectModal from './components/Modal/Modal';
 import Card from './components/Card/Card';
 import CardList from './components/Card/CardList';
-
+import { items } from './items';
 interface LayoutCoordinates {
   i: string;
   x: number;
@@ -31,6 +31,14 @@ enum ChartType {
   GAUGE = 'gauge-chart',
   COLUMN = 'column-chart',
   WATERFALL = 'waterfall-chart',
+}
+
+interface Breakpoints {
+  lg: number;
+  md: number;
+  sm: number;
+  xs: number;
+  xxs: number;
 }
 
 interface ChartItem {
@@ -52,57 +60,6 @@ const Column = dynamic(() => import('@ant-design/plots').then((mod) => mod.Colum
 const Waterfall = dynamic(() => import('@ant-design/plots').then((mod) => mod.Waterfall), { ssr: false });
 
 const rowHeight = 60;
-const items = [
-  {
-    title: 'Line',
-    description: 'Compare metrics over time',
-    image: 'https://www.svgrepo.com/show/324249/line-chart-dots-business-analytics-statistics.svg',
-    itemId: 'line-chart',
-    key: '0',
-  },
-  {
-    title: 'Stacked Area',
-    description: 'Compare the total over time',
-    image: 'https://www.svgrepo.com/show/324237/area-chart-business-analytics-statistics.svg',
-    itemId: 'stacked-area-chart',
-    key: '1',
-  },
-  {
-    title: 'Bar',
-    description: 'Compare categories of data',
-    image: 'https://www.svgrepo.com/show/401170/bar-chart.svg',
-    itemId: 'bar-chart',
-    key: '2',
-  },
-  {
-    title: 'Pie',
-    description: 'Show percentage of total data',
-    image: 'https://www.svgrepo.com/show/489940/pie-chart.svg',
-    itemId: 'pie-chart',
-    key: '3',
-  },
-  {
-    title: 'Gauge',
-    description: 'Show percentage of total data',
-    image: 'https://www.svgrepo.com/show/247566/gauge-indicator.svg',
-    itemId: 'gauge-chart',
-    key: '4',
-  },
-  {
-    title: 'Column',
-    description: 'To analyze the cost per unit of output, helping to understand the efficiency and profitability',
-    image: 'https://www.svgrepo.com/show/410302/stacked-bar-chart.svg',
-    itemId: 'column-chart',
-    key: '5',
-  },
-  {
-    title: 'Waterfall',
-    description: 'To visualize realized savings from various cost optimization initiatives',
-    image: 'https://www.svgrepo.com/show/458436/waterfall.svg',
-    itemId: 'waterfall-chart',
-    key: '6',
-  },
-];
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const originalItems: ChartItem[] = [];
@@ -118,7 +75,7 @@ const Home = () => {
   const [selectedChart, setSelectedChart] = useState(items[0].itemId);
   useEffect(() => {
     const layoutsOnLocalStorage = getFromLocalStorage('ly-it');
-    if (!layoutsOnLocalStorage) {
+    if (layoutsAndItems.items.length > 0 || !layoutsOnLocalStorage) {
       return;
     }
     const lsJSON = JSON.parse(layoutsOnLocalStorage);
@@ -130,17 +87,20 @@ const Home = () => {
   };
 
   const onRemoveItem = (itemId: string) => {
-    //setItems(items.filter((i) => i.key !== itemId));
-    //setLayouts({...layouts.lg.filter(i=> i.i!==itemId)});
+    const newLayouts = { lg: layoutsAndItems.layouts.lg.filter((item) => item.i !== itemId) };
+    const newItems = layoutsAndItems.items.filter((i) => i.key !== itemId);
+
+    setLayoutsAndItems({ items: newItems, layouts: newLayouts });
   };
 
   const onAddItem = (chartType: string) => {
     const newItemPlace = locateNext(layoutsAndItems.layouts.lg);
+    const newKey = Date.now().toString();
 
     setLayoutsAndItems({
-      items: [...layoutsAndItems.items, { type: chartType as ChartType, key: newItemPlace.i }],
+      items: [...layoutsAndItems.items, { type: chartType as ChartType, key: newKey }],
       layouts: {
-        lg: [...layoutsAndItems.layouts.lg, newItemPlace],
+        lg: [...layoutsAndItems.layouts.lg, { ...newItemPlace, i: newKey }],
       },
     });
   };
@@ -155,7 +115,7 @@ const Home = () => {
         h = val.h;
       }
     });
-    return { i: lg.length.toString(), x: 0, y: maxValY + h, w: 3, h: 3 };
+    return { i: '', x: 0, y: maxValY + h, w: 3, h: 3 };
   }
 
   function handleSaveClick() {
@@ -180,31 +140,25 @@ const Home = () => {
         </Topbar>
         <Button onClick={handleSaveClick}>Save to Local </Button>
         <Switch onChange={(e) => setEditModeStatus(e)} title='Edit Mode' />
-        <div>
-          <ResponsiveGridLayout
-            className='layout'
-            layouts={layoutsAndItems.layouts}
-            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-            cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-            rowHeight={rowHeight}
-            isResizable={editModeStatus}
-            isDraggable={editModeStatus}
-            onLayoutChange={onLayoutChange}
-          >
-            {layoutsAndItems?.items.map((item, i) => (
-              <div key={item.key} style={{ backgroundColor: '#F2F3F4' }}>
-                <ResizableWidget
-                  itemKey={item.key}
-                  layout={undefined}
-                  onRemove={() => onRemoveItem(item.key)}
-                  editMode={editModeStatus}
-                >
-                  {getChart(item, config, layoutsAndItems.layouts.lg, rowHeight)}
-                </ResizableWidget>
-              </div>
-            ))}
-          </ResponsiveGridLayout>
-        </div>
+
+        <ResponsiveGridLayout
+          className='layout'
+          layouts={layoutsAndItems.layouts}
+          breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+          cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+          rowHeight={rowHeight}
+          isResizable={editModeStatus}
+          isDraggable={editModeStatus}
+          onLayoutChange={onLayoutChange}
+        >
+          {layoutsAndItems?.items.map((item, i) => (
+            <div key={item.key} className={styles['resizable-widget-container']}>
+              <ResizableWidget itemKey={item.key} onRemove={() => onRemoveItem(item.key)} editMode={editModeStatus}>
+                {getChart(item, config, layoutsAndItems.layouts.lg, rowHeight)}
+              </ResizableWidget>
+            </div>
+          ))}
+        </ResponsiveGridLayout>
       </div>
       <ChartSelectModal
         title='Add Widget'
@@ -223,8 +177,29 @@ const Home = () => {
 };
 
 function getChart(item: ChartItem, config: any, lg: LayoutCoordinates[], rowHeight: number) {
-  const width = lg[Number(item.key)].w * 120;
-  const height = lg[Number(item.key)].h * rowHeight;
+  const layoutIndex = lg.findIndex((i) => i.i === item.key);
+  /*const breakpoints: Breakpoints = {
+    lg: 1200,
+    md: 996,
+    sm: 768,
+    xs: 480,
+    xxs: 0,
+  };
+
+  let breakpoint = breakpoints.lg;
+  if (window.innerWidth < 1200) {
+    breakpoint = breakpoints.md;
+  } else if (window.innerWidth < 996) {
+    breakpoint = breakpoints.sm;
+  } else if (window.innerWidth < 768) {
+    breakpoint = breakpoints.xs;
+  } else if (window.innerWidth < 480) {
+    breakpoint = breakpoints.xxs;
+  }
+
+  const width = (lg[layoutIndex].w * breakpoint) / 9 + lg[layoutIndex].w * 15;*/
+  const width = lg[layoutIndex].w * 130 + lg[layoutIndex].w * 15;
+  const height = lg[layoutIndex].h * rowHeight;
   const data = [
     { type: 'Cat', value: 27 },
     { type: 'Dog', value: 25 },

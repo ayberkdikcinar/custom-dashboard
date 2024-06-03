@@ -4,22 +4,26 @@ import { Button, Typography } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 
 type ResizableWidgetProps = {
-  layout: any;
-  onRemove: any;
+  onRemove: () => void;
   children: any;
   editMode: boolean;
   itemKey: string;
 };
 
-function ResizableWidget({ layout, onRemove, itemKey, children, editMode }: ResizableWidgetProps) {
+function ResizableWidget({ onRemove, itemKey, children, editMode }: ResizableWidgetProps) {
   return (
-    <div className={styles['root']}>
+    <div key={itemKey} className={styles['root']}>
       {editMode ? (
         <div className={styles['header']}>
-          <Button size={'small'} icon={<CloseOutlined />} onClick={onRemove}></Button>
+          <Button
+            size={'small'}
+            icon={<CloseOutlined />}
+            onMouseDown={(event) => event.stopPropagation()}
+            onClick={onRemove}
+          ></Button>
         </div>
       ) : null}
-      <div className={styles['body']}>{children}</div>
+      <div className={`${styles['body']} ${!editMode ? styles['extraPadding'] : ''}`}>{children}</div>
     </div>
   );
 }

@@ -154,7 +154,7 @@ const config = {
       stroke: '#ccc',
     },
     style: {
-      maxWidth: 25,
+      maxWidth: 20,
       stroke: '#ccc',
       fill: (d, idx) => {
         return idx === 0 || d.isTotal ? '#96a6a6' : d.value > 0 ? '#64b5f6' : '#ef6c00';
@@ -165,7 +165,7 @@ const config = {
       formatter: '~s',
       position: (d) => (d.value > 0 ? 'top' : 'bottom'),
       textBaseline: (d) => (d.value > 0 ? 'bottom' : 'top'),
-      fontSize: 10,
+      fontSize: 8,
       dy: (d) => (d.value > 0 ? -4 : 4),
     },
   },
