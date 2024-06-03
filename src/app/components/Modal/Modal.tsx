@@ -1,11 +1,13 @@
 import './Modal.module.css';
 import React, { useEffect, useState } from 'react';
 import { Button, Modal, Space } from 'antd';
+import { LegacyButtonType } from 'antd/es/button/button';
 
-type ChartSelectModalProps = {
+type CustomModalProps = {
   title: string;
   open: boolean;
   okText?: string;
+  okType?: LegacyButtonType;
   width?: string;
   cancelText?: string;
   onSubmit: () => void;
@@ -13,16 +15,17 @@ type ChartSelectModalProps = {
   children: any;
 };
 
-export default function ChartSelectModal({
+export default function CustomModal({
   title,
   open,
   okText = 'Submit',
   cancelText = 'Cancel',
   width = '800px',
+  okType = 'primary',
   onClose,
   onSubmit,
   children,
-}: ChartSelectModalProps) {
+}: CustomModalProps) {
   console.log('isOpen:', open);
 
   const closeModal = () => {
@@ -41,6 +44,7 @@ export default function ChartSelectModal({
         onOk={submitModal}
         onCancel={closeModal}
         okText={okText}
+        okType={okType}
         cancelText={cancelText}
         width={width}
       >

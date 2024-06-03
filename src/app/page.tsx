@@ -10,7 +10,7 @@ import ResizableWidget from '../app/components/Widget/Widget';
 import Topbar from '../app/components/Topbar/Topbar';
 import { Button, Switch } from 'antd';
 import { config } from './charts.config';
-import ChartSelectModal from './components/Modal/Modal';
+import CustomModal from './components/Modal/Modal';
 import Card from './components/Card/Card';
 import CardList from './components/Card/CardList';
 import { items } from './items';
@@ -72,6 +72,8 @@ const Home = () => {
 
   const [editModeStatus, setEditModeStatus] = useState(false);
   const [widgetModalOpen, setWidgetModalOpen] = useState<boolean>(false);
+  const [approveModalOpen, setApproveModalOpen] = useState<boolean>(false);
+  const [inRemoveStateItemId, setInRemoveStateItemId] = useState<string>('');
   const [selectedChart, setSelectedChart] = useState(items[0].itemId);
   useEffect(() => {
     const layoutsOnLocalStorage = getFromLocalStorage('ly-it');
@@ -87,10 +89,16 @@ const Home = () => {
   };
 
   const onRemoveItem = (itemId: string) => {
-    const newLayouts = { lg: layoutsAndItems.layouts.lg.filter((item) => item.i !== itemId) };
-    const newItems = layoutsAndItems.items.filter((i) => i.key !== itemId);
+    setApproveModalOpen(true);
+    setInRemoveStateItemId(itemId);
+  };
+
+  const onRemoveItemApproved = () => {
+    const newLayouts = { lg: layoutsAndItems.layouts.lg.filter((item) => item.i !== inRemoveStateItemId) };
+    const newItems = layoutsAndItems.items.filter((i) => i.key !== inRemoveStateItemId);
 
     setLayoutsAndItems({ items: newItems, layouts: newLayouts });
+    setApproveModalOpen(false);
   };
 
   const onAddItem = (chartType: string) => {
@@ -160,7 +168,7 @@ const Home = () => {
           ))}
         </ResponsiveGridLayout>
       </div>
-      <ChartSelectModal
+      <CustomModal
         title='Add Widget'
         open={widgetModalOpen}
         onClose={() => setWidgetModalOpen(false)}
@@ -171,7 +179,18 @@ const Home = () => {
           defaultCheckedItem={selectedChart}
           onChecked={(itemId) => setSelectedChart(itemId)}
         ></CardList>
-      </ChartSelectModal>
+      </CustomModal>
+      <CustomModal
+        title='Remove Widget'
+        open={approveModalOpen}
+        okText='Delete'
+        okType='danger'
+        width='400px'
+        onClose={() => setApproveModalOpen(false)}
+        onSubmit={() => onRemoveItemApproved()}
+      >
+        Are you sure do you want to delete?
+      </CustomModal>
     </div>
   );
 };
