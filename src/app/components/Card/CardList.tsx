@@ -31,7 +31,12 @@ export default function CardList({ itemList, defaultCheckedItem, onChecked }: Ca
           return (
             <Col span={12} key={index}>
               <div className={styles['cardContainer']}>
-                <ChartCard {...item} handleItemClick={handleItemClick} checkedItem={radioCheckedItem || ''} />
+                <ChartCard
+                  {...item}
+                  key={index}
+                  handleItemClick={handleItemClick}
+                  checkedItem={radioCheckedItem || ''}
+                />
               </div>
             </Col>
           );

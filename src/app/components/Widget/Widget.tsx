@@ -6,13 +6,13 @@ import { CloseOutlined } from '@ant-design/icons';
 type ResizableWidgetProps = {
   onRemove: () => void;
   children: any;
-  editMode: boolean;
-  itemKey: string;
+  editMode?: boolean;
 };
 
-function ResizableWidget({ onRemove, itemKey, children, editMode }: ResizableWidgetProps) {
+function ResizableWidget({ onRemove, children, editMode = true }: ResizableWidgetProps) {
+  console.log('log from widget.');
   return (
-    <div key={itemKey} className={styles['root']}>
+    <div className={styles['root']}>
       {editMode ? (
         <div className={styles['header']}>
           <Button

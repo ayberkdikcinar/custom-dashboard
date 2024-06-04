@@ -26,8 +26,6 @@ export default function CustomModal({
   onSubmit,
   children,
 }: CustomModalProps) {
-  console.log('isOpen:', open);
-
   const closeModal = () => {
     onClose();
   };

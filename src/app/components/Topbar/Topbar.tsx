@@ -1,21 +1,17 @@
 import styles from './Topbar.module.css';
-import React, { useState } from 'react';
-import { Button, Dropdown, Space } from 'antd';
-import { DownOutlined, SmileOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
+import React from 'react';
+import AddNewWidget from './AddNewWidget';
 
 type TopbarProps = {
-  onAddItem: (chartType: string) => void;
-  children: React.ReactNode;
+  //children: React.ReactNode;
   onAddWidgetClick: () => void;
 };
 
-function Topbar(props: TopbarProps) {
+function Topbar({ onAddWidgetClick }: TopbarProps) {
+  console.log('log from topbar.');
   return (
     <div className={styles.topbar}>
-      <Button type='primary' className={styles.rightAligned} onClick={() => props.onAddWidgetClick()}>
-        Add New Widget
-      </Button>
+      <AddNewWidget onClick={onAddWidgetClick} />
     </div>
   );
 }
