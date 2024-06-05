@@ -8,6 +8,7 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { ChartItem, LSJSON, LayoutCoordinates } from 'responsive/app/types/types';
 import { config as chartConfigs } from '../../config/charts.config';
+import CustomModal from '../Modal/Modal';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -22,7 +23,7 @@ const Waterfall = dynamic(() => import('@ant-design/plots').then((mod) => mod.Wa
 
 type ResponsiveGridLayoutsProps = {
   layoutsAndItems: LSJSON;
-  onRemoveItem: (itemId: string) => void;
+  handleRemoveItemApprove: (itemId: string) => void;
   onLayoutChange: (_: any, allLayouts: any) => void;
   editModeStatus: boolean;
 };
@@ -30,10 +31,33 @@ type ResponsiveGridLayoutsProps = {
 const ResponsiveGrid = ({
   editModeStatus,
   onLayoutChange,
-  onRemoveItem,
+  handleRemoveItemApprove,
   layoutsAndItems,
 }: ResponsiveGridLayoutsProps) => {
-  console.log('layouts:', layoutsAndItems);
+  const [approveModalOpen, setApproveModalOpen] = useState<boolean>(false);
+  const [inRemoveStateItemId, setInRemoveStateItemId] = useState<string>('');
+
+  const onRemoveItem = (itemId: string) => {
+    setApproveModalOpen(true);
+    setInRemoveStateItemId(itemId);
+  };
+
+  const onRemoveItemApprove = () => {
+    handleRemoveItemApprove(inRemoveStateItemId);
+    setApproveModalOpen(false);
+  };
+
+  const itemMap = useMemo(
+    () =>
+      layoutsAndItems?.items.map((item, i) => (
+        <div key={item.key}>
+          <ResizableWidget onRemove={() => onRemoveItem(item.key)} editMode={editModeStatus}>
+            {getChart(item, chartConfigs, layoutsAndItems.layouts.lg, responsiveGridLayoutConfig.rowHeight)}
+          </ResizableWidget>
+        </div>
+      )),
+    [layoutsAndItems, editModeStatus]
+  );
 
   return (
     <div>
@@ -44,14 +68,21 @@ const ResponsiveGrid = ({
         isDraggable={editModeStatus}
         onLayoutChange={onLayoutChange}
       >
-        {layoutsAndItems?.items.map((item, i) => (
-          <div key={item.key}>
-            <ResizableWidget onRemove={() => onRemoveItem(item.key)} editMode={editModeStatus}>
-              {getChart(item, chartConfigs, layoutsAndItems.layouts.lg, responsiveGridLayoutConfig.rowHeight)}
-            </ResizableWidget>
-          </div>
-        ))}
+        {itemMap}
       </ResponsiveGridLayout>
+      {approveModalOpen && (
+        <CustomModal
+          title='Remove Widget'
+          open={approveModalOpen}
+          okText='Delete'
+          okType='danger'
+          width='400px'
+          onClose={() => setApproveModalOpen(false)}
+          onSubmit={onRemoveItemApprove}
+        >
+          Are you sure do you want to delete?
+        </CustomModal>
+      )}
     </div>
   );
 };

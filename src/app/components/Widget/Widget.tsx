@@ -10,7 +10,6 @@ type ResizableWidgetProps = {
 };
 
 function ResizableWidget({ onRemove, children, editMode = true }: ResizableWidgetProps) {
-  console.log('log from widget.');
   return (
     <div className={styles['root']}>
       {editMode ? (
